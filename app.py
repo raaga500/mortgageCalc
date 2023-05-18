@@ -5,11 +5,11 @@ import math
 st.title("Mortgage Prepayment Calculator")
 st.divider()
 
-ord_mrtg_amt = st.text_input("**Original Mortgage Amount**").strip()
-org_mortg_term = st.text_input("Original Mortgage Term (in years)").strip()
-years_remaining = st.text_input("Years remaining").strip()
-interest_rate = st.text_input("Interest Rate").strip()
-add_principal_pmnt = st.text_input("Additional Principal Payment").strip()
+ord_mrtg_amt = st.text_input("**Original Mortgage Amount**",value=0.01).strip()
+org_mortg_term = st.text_input("Original Mortgage Term (in years)",value=0.01).strip()
+years_remaining = st.text_input("Years remaining",value=0.01).strip()
+interest_rate = st.text_input("Interest Rate",value=0.01).strip()
+add_principal_pmnt = st.text_input("Additional Principal Payment",value=0.01).strip()
 
 ord_mrtg_amt = float(ord_mrtg_amt)
 org_mortg_term = float(org_mortg_term)
