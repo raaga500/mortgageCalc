@@ -6,7 +6,7 @@ import ammortization as am
 # from PIL import Image
 import plotly.express as px
 import locale
-locale.setlocale( locale.LC_ALL, '' )
+locale.setlocale( locale.LC_ALL, 'en_CA.UTF-8' )
 
 #Helper functions
 def create_chart(df):
