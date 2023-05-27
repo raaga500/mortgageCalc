@@ -5,8 +5,8 @@ import numpy as np
 import ammortization as am
 # from PIL import Image
 import plotly.express as px
-import locale
-locale.setlocale( locale.LC_ALL, 'en_CA.UTF-8' )
+#import locale
+#locale.setlocale( locale.LC_ALL, 'en_CA.UTF-8' )
 
 #Helper functions
 def create_chart(df):
@@ -118,7 +118,7 @@ with result_container:
         st.write(f"**Months Saved**: {months_saved}")
         st.write(f"**Interest Saved**: ${interest_saved}")
 
-result_summary = f'You will save {locale.currency(interest_saved, grouping=True)} in total interest by paying additional ${add_principal_pmnt} monthly payment.'
+result_summary = f'You will save {interest_saved} in total interest by paying additional ${add_principal_pmnt} monthly payment.'
 st.markdown(f"<h2 style='text-align: center;'>{result_summary}</h1>", unsafe_allow_html=True)
 st.divider()
 
