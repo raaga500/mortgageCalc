@@ -8,6 +8,21 @@ import plotly.express as px
 #import locale
 #locale.setlocale( locale.LC_ALL, 'en_CA.UTF-8' )
 
+import plotly.graph_objects as go
+
+def show_gauge_meter(value,title,prefix=None):
+    fig = go.Figure(go.Indicator(
+        #mode = "gauge+number",
+        mode = "number",
+        value = value,
+        number = {'prefix': prefix, "font":{"size":80,"color":"black"}},
+        title = {'text': title,"font":{"size":20,"color":"green"}},
+        domain = {'x': [0, 1], 'y': [0, 1]}
+    ))
+    fig.update_layout(height=140)
+    fig.update_layout(paper_bgcolor = "white")
+    return fig
+
 #Helper functions
 def create_chart(df):
     fig = px.line(df, x=df.index, y=['orig_Balance','orig_TotalPaid','new_Balance','new_TotalPaid'])
@@ -77,21 +92,48 @@ with col1:
 ord_mrtg_amt = float(ord_mrtg_amt)
 org_mortg_term = int(org_mortg_term)
 interest_rate = float(interest_rate)
-years_remaining = float(years_remaining)
+years_remaining = int(years_remaining)
 add_principal_pmnt = float(add_principal_pmnt)
 
 
 
 #Calculate results
 result_dict = calculatePrepaymentNumbers(ord_mrtg_amt,interest_rate,years_remaining,add_principal_pmnt)
+
+#Get payments with no additional payment and original terms
 df_original = getAmmortizationSchedule(ord_mrtg_amt,interest_rate,org_mortg_term,add_principal_pmnt=0)
-df_original.columns = [f'orig_{col}' for col in df_original.columns]
+
+#Split dataframe into past and remaining future payments
+idx = ((org_mortg_term-years_remaining)*12)
+
+#past payments df
+df_past = df_original.iloc[:idx]
+#st.write('df_past')
+#st.write(df_past)
+
+#remaining payments df
+df_remaining = df_original.iloc[idx:]
+#st.write('df_remaining')
+#st.write(df_remaining)
+
+#calculate remaining balance which will be input to the new payment schedule calculation
+remaining_balance = df_remaining['Balance'].iloc[0]
+remaining_balance
+
+
 
 
 #Show the chart and a slider to tweak the Additional Payment
 with col2:
     graph_container = st.container()
     add_principal_pmnt = st.slider("**Addtional Payment Per month ($)**",min_value=0,max_value=3000,step=50,value=int(add_principal_pmnt))
+
+    #Get payments with additional monthly payment and remaining balanace and terms
+    df_new_remaining = getAmmortizationSchedule(remaining_balance,interest_rate,years_remaining,add_principal_pmnt)
+    #st.write('df_new_remaining')
+    #st.write(df_new_remaining)
+    df_original.columns = [f'orig_{col}' for col in df_original.columns]
+
     result_dict = calculatePrepaymentNumbers(ord_mrtg_amt,interest_rate,years_remaining,add_principal_pmnt)
     df_new = getAmmortizationSchedule(ord_mrtg_amt,interest_rate,org_mortg_term,add_principal_pmnt)
     df_new.columns = [f'new_{col}' for col in df_new.columns]
@@ -101,6 +143,9 @@ with col2:
     fig = create_chart(chart_data)
     graph_container.plotly_chart(fig,use_container_width=True)
 
+    # fig_gauge = show_gauge_meter()
+    # graph_container.plotly_chart(fig_gauge,use_container_width=True)
+
 #Assign result variables
 original_monthly_payment = round(df_concat['orig_Instalment'][0]*-1,2)
 new_monthly_payment = round(original_monthly_payment + add_principal_pmnt,2)
@@ -109,20 +154,22 @@ interest_saved = round(result_dict['totalInterestSaved'])
 
 #Show results in result container
 with result_container:
-    col2_a, col2_b = st.columns(2)
-    with col2_a:
-        st.write(f"**Original Monthly Payment** : ${original_monthly_payment}")
-        #st.write(original_monthly_payment)
-        st.write(f"**New Monthly Payment**: ${new_monthly_payment}")
-    with col2_b:
-        st.write(f"**Months Saved**: {months_saved}")
-        st.write(f"**Interest Saved**: ${interest_saved}")
+
+    col1, col2, col3, col4 = st.columns(4)
+    #fig_gauge = show_gauge_meter(450)
+    col1.plotly_chart(show_gauge_meter(original_monthly_payment,"Original Monthly Payment",prefix="$"),use_container_width=True)
+    col2.plotly_chart(show_gauge_meter(new_monthly_payment,"New Monthly Payment",prefix="$"),use_container_width=True)
+    col3.plotly_chart(show_gauge_meter(months_saved,"Months Saved"),use_container_width=True)
+    col4.plotly_chart(show_gauge_meter(interest_saved,"Interest Saved",prefix="$"),use_container_width=True)
+
 
 result_summary = f'You will save {interest_saved} in total interest by paying additional ${add_principal_pmnt} monthly payment.'
 st.markdown(f"<h2 style='text-align: center;'>{result_summary}</h1>", unsafe_allow_html=True)
 st.divider()
 
-st.write(df_concat)
+
+
+#st.write(df_concat)
 # st.write(df_concat['new_Interest'].sum())
 # st.write(df_concat['orig_Interest'].sum())
 # st.write(result_dict['totalInterestSaved'])
