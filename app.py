@@ -1,13 +1,10 @@
+#Import All Dependencies
 import streamlit as st
 import math
 import pandas as pd
 import numpy as np
 import ammortization as am
-# from PIL import Image
 import plotly.express as px
-#import locale
-#locale.setlocale( locale.LC_ALL, 'en_CA.UTF-8' )
-
 import plotly.graph_objects as go
 
 
