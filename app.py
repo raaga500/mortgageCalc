@@ -82,7 +82,7 @@ st. set_page_config(layout="wide")
 st.markdown("<h1 style='text-align: center;'>Mortgage Prepayment Calculator</h1>", unsafe_allow_html=True)
 
 
-#------Create empty result container  at the top of the page which will be populated after all the calcullations
+#------Create empty result container  at the top of the page which will be populated after all the calculations
 #Result container
 st.divider()
 result_container = st.container()
