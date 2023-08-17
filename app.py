@@ -8,7 +8,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 
 
-#-------Charting Functions----------
+#-------Charting helper Functions----------
 
 #Function to show large result boxes at the top of the page
 def show_gauge_meter(value,title,prefix=None):
@@ -39,7 +39,7 @@ def create_chart(df):
     return fig
 
 
-#-------Calculation Functions---------------
+#-------Ammortization Calculation Helper Functions---------------
 
 #Function to calculate New and Old Monthly payment as implemented by me
 def calculatePrepaymentNumbers(ord_mrtg_amt, interest_rate, years_remaining, add_principal_pmnt):
